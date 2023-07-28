@@ -1,15 +1,41 @@
-import { Body, Controller, Post, Logger } from "@nestjs/common";
+import { Body, Controller, Post, Logger, BadRequestException, NotFoundException } from "@nestjs/common";
+import  * as bcrypt from "bcryptjs";
 import { RegisterDto } from "./dtos/register.dto";
+import { UserService } from "src/user/user.service";
 
 @Controller()
 export class AuthController { 
   private readonly logger = new Logger(AuthController.name)
  
-  
-
+  constructor(private userService: UserService){}
+ 
    @Post("admin/register")
-   register(@Body() body: RegisterDto){
+   async register(@Body() body: RegisterDto){
     this.logger.log("Handling registration request of user with email: " + body.email + " ...")
-     return body; 
+    const { password_confirm , ...data} = body; 
+    if(body.password !== password_confirm){
+       throw new BadRequestException("Passwords do not match"); 
+    }
+    const hashedPwd = await bcrypt.hash(body.password, 12)
+     return this.userService.save({
+      ...data, 
+      password: hashedPwd, 
+      is_ambassador: false
+     }); 
+   }
+
+   @Post("admin/login")
+   async login(@Body() {email, password}: {email: string, password: string}){
+ 
+    const user = await this.userService.findOne({email});
+    if (!user){
+        throw new NotFoundException("User not found");
+    }
+    if (!await bcrypt.compare(password, user.password)){
+       throw new BadRequestException("Invalid credentials");
+
+    }
+
+    return user; 
    }
 }
