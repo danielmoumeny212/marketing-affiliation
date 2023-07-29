@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './commom/middleware/logger.middleware';
 import { AuthController } from './auth/auth.controller';
 import { UserController } from './user/user.controller';
+import { UserInRequestMiddleware } from './commom/middleware/set_user.middleware';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { UserController } from './user/user.controller';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
       consumer.
-      apply(LoggerMiddleware)
+      apply(UserInRequestMiddleware, LoggerMiddleware)
       .forRoutes(AuthController, UserController)
   }
 }
