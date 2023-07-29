@@ -1,28 +1,23 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import {Global, Module} from "@nestjs/common";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { UserModule } from "src/user/user.module";
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from "./constants";
-import { LoggerMiddleware } from "src/commom/middleware/logger.middleware";
+import { AuthGuard } from "./auth.guard";
 
 
+@Global()
 @Module({
   imports: [UserModule , 
     JwtModule.register({
-      // global: true,
+      global: true,
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '1d' },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService,AuthGuard], 
+  exports: [AuthService]
 })
-export class AuthModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-      consumer.
-      apply(LoggerMiddleware)
-      .forRoutes(AuthController)
-  }
-
-}
+export class AuthModule {}

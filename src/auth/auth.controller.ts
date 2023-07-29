@@ -1,32 +1,26 @@
-import { Body, Controller, Post, Logger, BadRequestException, NotFoundException, Res, Get, Req, UseInterceptors, ClassSerializerInterceptor, UseGuards , Put} from "@nestjs/common";
+import { Body, Controller, Post, BadRequestException, NotFoundException, Res,  UseInterceptors, ClassSerializerInterceptor, UseGuards} from "@nestjs/common";
 import  * as bcrypt from "bcryptjs";
-import { Request, Response } from "express";
-import { JwtService } from "@nestjs/jwt";
+import { Response } from "express";
 import { RegisterDto } from "./dtos/register.dto";
 import { UserService } from "src/user/user.service";
 import { AuthGuard } from "./auth.guard";
-import { UpdateUserDto } from "./dtos/update_user.dto";
+import { AuthService } from "./auth.service";
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
 export class AuthController { 
-  private readonly logger = new Logger(AuthController.name)
  
-  constructor(private userService: UserService, private jwtService: JwtService){}
- 
+  constructor(private userService: UserService, private authService: AuthService){}
+   
+   
    @Post("admin/register")
    async register(@Body() body: RegisterDto){
-    this.logger.log("Handling registration request of user with email: " + body.email + " ...")
-    const { password_confirm , ...data} = body; 
+    const { password_confirm} = body; 
     if(body.password !== password_confirm){
        throw new BadRequestException("Passwords do not match"); 
     }
-    const hashedPwd = await bcrypt.hash(body.password, 12)
-     return this.userService.save({
-      ...data, 
-      password: hashedPwd, 
-      is_ambassador: false
-     }); 
+    return this.authService.newUser(body)
+    
    }
 
    @Post("admin/login")
@@ -43,7 +37,7 @@ export class AuthController {
        throw new BadRequestException("Invalid credentials");
 
     }
-    const jwt = await this.jwtService.signAsync({
+    const jwt = await this.authService.generateJwt({
        id: user.id, 
        last_name: user.last_name
     })
@@ -52,40 +46,16 @@ export class AuthController {
     return { message: "success"}; 
    }
    
-   @UseGuards(AuthGuard)
-   @Get("admin/me")
-   async user(
-    @Req() request: Request
-   ){  
-      const cookie = request.cookies['jwt'];
-      const {id} = await this.jwtService.verifyAsync(cookie);
-      const user = await this.userService.findOne({id})
-
-      return user;
-
-   }
+  
    
    @UseGuards(AuthGuard)
    @Post("admin/logout")
    async logout(@Res({passthrough: true}) response: Response){
     response.clearCookie('jwt');
-
     return {
        message: "success",
     }
    }
 
-   @UseGuards(AuthGuard)
-   @Put("admin/users/info")
-   async updateInfo (@Req() request: Request,
-      @Body() user: UpdateUserDto
-   ){
-      const cookie = request.cookies['jwt'];
-      const {id} = await this.jwtService.verifyAsync(cookie);
-
-     await this.userService.update(id, {
-      ...user 
-     })
-     return this.userService.findOne({id})
-   }
+   
 }

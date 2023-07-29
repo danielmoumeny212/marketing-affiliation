@@ -22,4 +22,10 @@ export class UserService {
   async update(id: number, options){
     return this.userRepository.update(id, options); 
   }
+
+  async find(options){
+    return this.userRepository.find({
+      where: options
+    })
+  }
 }
