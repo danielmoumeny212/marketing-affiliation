@@ -9,7 +9,8 @@ import { AuthGuard } from "./auth.guard";
 
 @Global()
 @Module({
-  imports: [UserModule , 
+  imports: [
+    UserModule , 
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
