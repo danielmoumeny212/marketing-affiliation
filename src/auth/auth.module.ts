@@ -22,7 +22,7 @@ export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
       consumer.
       apply(LoggerMiddleware)
-      .forRoutes("*")
+      .forRoutes(AuthController)
   }
 
 }

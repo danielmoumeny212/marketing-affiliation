@@ -76,10 +76,16 @@ export class AuthController {
    }
 
    @UseGuards(AuthGuard)
-   @Put()
+   @Put("admin/users/info")
    async updateInfo (@Req() request: Request,
       @Body() user: UpdateUserDto
    ){
-     const cookie = request.cookies["jwt"]; 
+      const cookie = request.cookies['jwt'];
+      const {id} = await this.jwtService.verifyAsync(cookie);
+
+     await this.userService.update(id, {
+      ...user 
+     })
+     return this.userService.findOne({id})
    }
 }

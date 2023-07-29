@@ -12,6 +12,9 @@ export class User {
 
   @Column({unique: true})
   email: string; 
+
+  @Column()
+   first_name: string; 
   
   @Exclude()
   @Column()
