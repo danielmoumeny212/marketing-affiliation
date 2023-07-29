@@ -8,6 +8,7 @@ import { LoggerMiddleware } from './commom/middleware/logger.middleware';
 import { AuthController } from './auth/auth.controller';
 import { UserController } from './user/user.controller';
 import { UserInRequestMiddleware } from './commom/middleware/set_user.middleware';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { UserInRequestMiddleware } from './commom/middleware/set_user.middleware
       synchronize: true,
     }),
     UserModule,
-    AuthModule
+    AuthModule,
+    ProductModule
   ],
   controllers: [AppController],
   providers: [AppService],
