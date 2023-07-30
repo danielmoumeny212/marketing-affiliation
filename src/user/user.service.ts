@@ -2,30 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user';
 import { Repository } from 'typeorm';
+import { AbstractService } from 'src/commom/shared/abstract.service';
 
 @Injectable()
-export class UserService {
+export class UserService extends AbstractService<User> {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-  ) {}
-
-  async save(options) {
-    return this.userRepository.save(options);
-  }
-
-  async findOne(options): Promise<User | undefined> {
-    return this.userRepository.findOne({
-      where: options
-    });
-  }
-
-  async update(id: number, options){
-    return this.userRepository.update(id, options); 
-  }
-
-  async find(options){
-    return this.userRepository.find({
-      where: options
-    })
+  ) {
+    super(userRepository);
   }
 }
