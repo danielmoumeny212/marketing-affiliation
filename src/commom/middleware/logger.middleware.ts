@@ -10,3 +10,10 @@ export class LoggerMiddleware implements NestMiddleware{
   }
 }
 
+export function loggerMiddleWare(req: Request, res: Response, next: NextFunction){
+   const logger  = new Logger(loggerMiddleWare.name)
+   logger.log(`handling ${req.method} request  to endpoint ${req.url !==""? req.url: "/"} ...`);
+   next();
+   
+}
+

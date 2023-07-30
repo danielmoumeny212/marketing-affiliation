@@ -20,7 +20,7 @@ export abstract class AbstractService <T> {
     return this.repository.update(id, options); 
   }
 
-  async find(options):Promise<T[]>{
+  async find(options = {}):Promise<T[]>{
     return this.repository.find({
       where: options
     })
