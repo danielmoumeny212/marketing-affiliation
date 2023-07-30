@@ -9,6 +9,7 @@ import { AuthController } from './auth/auth.controller';
 import { UserController } from './user/user.controller';
 import { UserInRequestMiddleware } from './commom/middleware/set_user.middleware';
 import { ProductModule } from './product/product.module';
+import { ProductController } from './product/product.controller';
 
 @Module({
   imports: [
@@ -33,6 +34,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
       consumer.
       apply(UserInRequestMiddleware, LoggerMiddleware)
-      .forRoutes(AuthController, UserController)
+      .forRoutes(AuthController, UserController, ProductController)
   }
 }

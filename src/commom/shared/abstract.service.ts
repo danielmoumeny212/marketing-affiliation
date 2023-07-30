@@ -25,4 +25,8 @@ export abstract class AbstractService <T> {
       where: options
     })
   }
+
+  async delete(options){
+     return await this.repository.delete(options); 
+  }
 }

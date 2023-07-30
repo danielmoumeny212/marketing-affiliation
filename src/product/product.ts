@@ -5,11 +5,11 @@ export class Product {
   
   @PrimaryGeneratedColumn() id: number; 
 
-  @Column() title: string; 
+  @Column({length: 255}) name: string; 
 
-  @Column() description: string; 
+  @Column({nullable: true,}) description: string; 
 
-  @Column() image: string; 
+  @Column({length: 255}) image: string; 
 
   @Column() price: number; 
 }
