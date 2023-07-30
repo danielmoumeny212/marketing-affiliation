@@ -1,17 +1,21 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { OrderItem } from "./order-items";
 
 @Entity({name: "orders"})
 export class Order {
  @PrimaryGeneratedColumn() id: number; 
  @Column({nullable: true}) transaction_id: string; 
-  user_id: number; 
-  ambassador_email: string; 
-  first_name: string; 
-  last_name: string; 
-  email: string; 
-  address: string; 
-  country: string; 
-  city: string; 
-  zip: string; 
-  complete: boolean; 
+ @Column()  user_id: number; 
+ @Column() ambassador_email: string; 
+ @Column() first_name: string; 
+ @Column() last_name: string; 
+ @Column() email: string; 
+ @Column({nullable: true})  address: string; 
+ @Column({nullable: true})  country: string; 
+ @Column({nullable: true})  city: string; 
+ @Column({nullable: true})  zip: string; 
+ @Column({default: false}) complete: boolean; 
+ 
+ @OneToMany(() => OrderItem, orderitem => orderitem.order)
+ order_items: OrderItem[]; 
 }
