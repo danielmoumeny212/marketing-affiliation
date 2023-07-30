@@ -10,6 +10,7 @@ import { UserController } from './user/user.controller';
 import { UserInRequestMiddleware } from './commom/middleware/set_user.middleware';
 import { ProductModule } from './product/product.module';
 import { ProductController } from './product/product.controller';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { ProductController } from './product/product.controller';
     }),
     UserModule,
     AuthModule,
-    ProductModule
+    ProductModule,
+    OrderModule
   ],
   controllers: [AppController],
   providers: [AppService],
