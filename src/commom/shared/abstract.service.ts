@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 
-export abstract class AbstractService <T> {
+export abstract class AbstractService <T = any> {
   protected constructor(
     protected readonly repository: Repository<T>
   ){}
