@@ -21,9 +21,9 @@ export abstract class AbstractService <T = any> {
   }
 
   async find(options = {}):Promise<T[]>{
-    return this.repository.find({
-      where: options
-    })
+    return this.repository.find(
+      options
+    )
   }
 
   async delete(options){
