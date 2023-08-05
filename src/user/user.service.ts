@@ -11,4 +11,7 @@ export class UserService extends AbstractService<User> {
   ) {
     super(userRepository);
   }
+  async userAlreadyExists(email: string): Promise<boolean> {
+    return (await this.findOne({ email: email })) ? true : false;
+  }
 }

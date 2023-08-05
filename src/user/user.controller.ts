@@ -32,7 +32,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Put('admin/users/info')
+  @Put(['admin/users/info', "ambassador/users/info"])
   async updateInfo(
     @Req() request: Request,
     @Body() { email, first_name, last_name }: UpdateUserDto,
@@ -67,11 +67,12 @@ export class UserController {
     return this.userService.findOne({ id });
   }
   @UseGuards(AuthGuard)
-  @Get('admin/me')
+  @Get(['admin/me', "ambassador/me"])
   async user(@Req() request: Request) {
     const cookie = request.cookies['jwt'];
     const { id } = await this.authService.checkCookie(cookie);
     const user = await this.userService.findOne({ id });
+    console.log(user);
 
     return user;
   }
