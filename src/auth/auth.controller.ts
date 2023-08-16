@@ -36,7 +36,7 @@ export class AuthController {
       throw new BadRequestException("Email already taken by a user");
     }
     const is_ambassador =
-      req.path === '/api/ambassador/register' ? true : false;
+      req.url === '/api/ambassador/register' ? true : false;
     return this.authService.newUser(rest, is_ambassador);
   }
 

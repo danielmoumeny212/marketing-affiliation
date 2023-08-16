@@ -71,9 +71,11 @@ export class UserController {
   async user(@Req() request: Request) {
     const cookie = request.cookies['jwt'];
     const { id } = await this.authService.checkCookie(cookie);
-    const user = await this.userService.findOne({ id });
-    console.log(user);
-
-    return user;
+    const user = await this.userService.findOne({ where: {id} , relations: ["orders", "orders.order_items"]});
+    
+    return {
+      ...user, 
+      revenue: user.revenue 
+    }
   }
 }

@@ -11,9 +11,7 @@ export abstract class AbstractService <T = any> {
 
   
   async findOne(options): Promise<T | undefined> {
-    return this.repository.findOne({
-      where: options
-    });
+    return this.repository.findOne(options);
   }
 
   async update(id: number, options){
