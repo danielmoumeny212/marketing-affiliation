@@ -1,14 +1,20 @@
 import { CreateProductDto, UpdateProductDto } from './dtos';
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put , UseGuards, UseInterceptors} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put , UseGuards, UseInterceptors, Inject} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { CACHE_MANAGER, CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 
 @UseGuards(AuthGuard)
 @Controller()
 export class ProductController {
-  constructor(private productService: ProductService){}
+  constructor(
+    private productService: ProductService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private eventEmitter: EventEmitter2
+    ){}
 
   @Get("admin/products")
   async allProducts(){
@@ -16,8 +22,10 @@ export class ProductController {
   }
 
   @Post("admin/products")
-  async create(@Body() product: CreateProductDto){ 
-   return await this.productService.save(product);
+  async create(@Body() body: CreateProductDto){ 
+    const product =  await this.productService.save(body);
+    this.eventEmitter.emit("product_updated");
+   return product;
   } 
 
   @Get("admin/products/:id")
@@ -29,12 +37,20 @@ export class ProductController {
   async update(@Param("id", ParseIntPipe) id: number, 
              @Body() product: UpdateProductDto){
      await this.productService.update(id, product); 
-     return await this.productService.findOne({id});
+
+     const updatedProduct =await this.productService.findOne({ where: {id}}); 
+     this.eventEmitter.emit("product_updated");
+
+
+
+     return updatedProduct;
   }
 
   @Delete("admin/products/:id")
   async remove (@Param("id", ParseIntPipe) id: number){
       await this.productService.delete(id);
+       this.eventEmitter.emit("product_updated");
+
       return {
         message: "product deleted successfully"
       }
@@ -49,6 +65,13 @@ export class ProductController {
 
   @Get("ambassador/products/backend")
   async backend(){
-    return 
+    const products = await this.productService.find();
+
+    // let  products = await this.cacheManager.get("products_backend");
+    // if(!products){
+    //    products = await this.productService.find();
+    //    await this.cacheManager.set("products_backend", products, 1000);
+    // }
+    return products; 
   }
 }
