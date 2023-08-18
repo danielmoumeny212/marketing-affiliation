@@ -1,22 +1,32 @@
 version: "3.9"
 services: 
    backend: 
-     build:  . 
+     build:  .
      ports: 
-       - 8000:3000
+       - 3000:3000
      volumes: 
        - .:/app 
      depends_on: 
        - db 
    db: 
-     image: mysql:5.7.22
+     image: mysql:8.0
      restart: always
+     command: --default-authentication-plugin=mysql_native_password
      environment: 
         MYSQL_DATABASE: ambassador
-        MYSQL_USER: root 
-        MYSQL_PASSWORD: root
-        MYSQL_ROOT_PASSWORD: root     
-     volumes:
-       - .dbdata:/var/lib/mysql
+        MYSQL_ROOT_HOST: "%"
+        MYSQL_USER: daniel
+        MYSQL_PASSWORD: Manassedaniel2001@
+        MYSQL_ROOT_PASSWORD: Manassedaniel2001@
      ports:
-       - 33066:3306
+       - 3307:3306
+     volumes:
+       - db-data:/var/lib/mysql  # You can define a named volume for data persistence
+     
+   redis: 
+     image: redis 
+     ports: 
+        - 6379:6379
+
+volumes:
+   db-data:  # Define a named volume for MySQL data

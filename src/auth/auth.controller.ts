@@ -46,7 +46,9 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Req() request: Request
   ) {
-    const user = await this.userService.findOne({ email });
+     
+    
+    const user = await this.userService.findOne({ where: {email} });
     if (!user) {
       throw new NotFoundException('User not found');
     }

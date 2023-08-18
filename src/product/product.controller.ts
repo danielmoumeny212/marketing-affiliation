@@ -1,7 +1,11 @@
 import { CreateProductDto, UpdateProductDto } from './dtos';
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put , UseGuards, UseInterceptors} from '@nestjs/common';
 import { ProductService } from './product.service';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
+
+@UseGuards(AuthGuard)
 @Controller()
 export class ProductController {
   constructor(private productService: ProductService){}
@@ -34,5 +38,17 @@ export class ProductController {
       return {
         message: "product deleted successfully"
       }
+  }
+  @Get("ambassador/products/frontend")
+  @CacheKey("products_frontend")
+  @CacheTTL( 30 * 60)
+  @UseInterceptors(CacheInterceptor)
+  async frontend(){
+    return this.productService.find(); 
+  }
+
+  @Get("ambassador/products/backend")
+  async backend(){
+    return 
   }
 }
