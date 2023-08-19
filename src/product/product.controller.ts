@@ -82,8 +82,8 @@ export class ProductController {
   }
 
   @Get('ambassador/products/backend')
-  async backend(@Req() request: Request) {
-    const { sort, search } = request.query;
+  async backend(@Req() request: Request) { 
+    const { sort, search ,page: currentPage } = request.query;
     let products = await this.productService.find();
     if (search) {
       const s = search.toString().toLowerCase();
@@ -104,11 +104,28 @@ export class ProductController {
       });
     }
 
+    const page : number = parseInt(currentPage as any) || 1; 
+    const perPage =  9; 
+
+    const data = products.slice((page -1) * perPage, page * perPage)
+    const total = products.length
+    const last_page =  Math.ceil(total / perPage);
+    const prev = page === 1 ? null : `${process.env.BASE_URL}${request.path}`    
+
+
     // let  products = await this.cacheManager.get("products_backend");
     // if(!products){
     //    products = await this.productService.find();
     //    await this.cacheManager.set("products_backend", products, 1000);
     // }
-    return products;
+    return {
+    
+      total, 
+      page,
+      prev,
+      last_page,
+      data
+
+    };
   }
 }

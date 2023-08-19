@@ -4,6 +4,7 @@ import { ValidationPipe} from "@nestjs/common";
 import * as cookieParser from "cookie-parser"
 import { loggerMiddleWare } from './commom/middleware/logger.middleware';
 
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');

@@ -8,7 +8,7 @@ import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { LinkModule } from './link/link.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -21,9 +21,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    EventEmitterModule.forRoot(
-
-    ),
+    EventEmitterModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    }),
     UserModule,
     AuthModule,
     ProductModule,
