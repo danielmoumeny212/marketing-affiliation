@@ -9,6 +9,7 @@ import { OrderModule } from './order/order.module';
 import { LinkModule } from './link/link.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule } from '@nestjs/config';
+import { SharedModule } from './shared/shared.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -29,7 +30,8 @@ import { ConfigModule } from '@nestjs/config';
     AuthModule,
     ProductModule,
     OrderModule,
-    LinkModule
+    LinkModule,
+    SharedModule
   ],
   controllers: [AppController],
   providers: [AppService],

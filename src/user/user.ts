@@ -3,7 +3,6 @@ import { Order } from 'src/order/order';
 import {
   Column,
   Entity,
-  NoNeedToReleaseEntityManagerError,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';

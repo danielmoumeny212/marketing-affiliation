@@ -14,6 +14,8 @@ import { LinkService } from './link.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Order } from 'src/order/order';
 
+  
+@UseGuards(AuthGuard)
 @Controller()
 export class LinkController {
   constructor(
@@ -21,7 +23,6 @@ export class LinkController {
     private authService: AuthService,
   ) {}
 
-  // @UseGuards(AuthGuard)
   @Get('admin/users/:id/links')
   async all(@Param('id', ParseIntPipe) id: number) {
     return this.linkService.find({
