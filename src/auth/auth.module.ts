@@ -8,6 +8,7 @@ import { AuthGuard } from './auth.guard';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import type { RedisClientOptions } from 'redis';
+import { ProcessorService } from './processor.service';
 
 @Global()
 @Module({
@@ -25,9 +26,10 @@ import type { RedisClientOptions } from 'redis';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthGuard],
+  providers: [AuthService, AuthGuard, ProcessorService],
   exports: [
     AuthService,
+    ProcessorService,
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
       host: 'localhost',

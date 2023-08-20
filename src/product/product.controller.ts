@@ -24,6 +24,7 @@ import {
 import { Cache } from 'cache-manager';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Request } from 'express';
+import { ProcessorService } from 'src/auth/processor.service';
 
 // @UseGuards(AuthGuard)
 @Controller()
@@ -31,6 +32,7 @@ export class ProductController {
   constructor(
     private productService: ProductService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private processor: ProcessorService,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -82,38 +84,31 @@ export class ProductController {
   }
 
   @Get('ambassador/products/backend')
-  async backend(@Req() request: Request) { 
-    const { sort, search ,page: currentPage } = request.query;
+  async backend(@Req() request: Request) {
+    const { sort, search, page: currentPage } = request.query;
     let products = await this.productService.find();
     if (search) {
-      const s = search.toString().toLowerCase();
-
-      products = products.filter(
-        (p) =>
-          p.name.toLowerCase().indexOf(s) >= 0 ||
-          p.description.toLowerCase().indexOf(s) >= 0,
-      );
+      products = this.processor.filter(products, search as string, [
+        (item) => item.name,
+        (item) => item.description,
+      ]);
     }
 
     if (sort === 'asc' || sort === 'desc') {
-      products.sort((a, b) => {
-        const diff = a.price - b.price;
-        if (diff === 0) return 0;
-        const sign = Math.abs(diff) / diff;
-        return sort === 'asc' ? sign : -sign;
-      });
+      products = this.processor.sort(products, sort);
     }
 
-    const page : number = parseInt(currentPage as any) || 1; 
-    const perPage =  9; 
+    const page: number = parseInt(currentPage as any) || 1;
+    const perPage = 9;
+    const { data, total, last_page, next, previous } = this.processor.paginate(
+      products,
+      page,
+      perPage,
+    );
 
-    const data = products.slice((page -1) * perPage, page * perPage)
-    const url  = `${process.env.BASE_URL}${request.path}`
-    const total = products.length
-    const last_page =  Math.ceil(total / perPage);
-    const prev = page === 1 ? null : page >= last_page ? null : `${url}?page=${page - 1}`
-    const next = page === 1 ? null : page >= last_page ? null : `${url}?page=${page + 1}`; 
-
+    const url = `${process.env.BASE_URL}${request.path}`;
+    const nextPage = next === null ? null : `${url}?page=${next}`;
+    const prevPage = previous === null ? null: `${url}?page=${previous}`;
 
     // let  products = await this.cacheManager.get("products_backend");
     // if(!products){
@@ -121,13 +116,11 @@ export class ProductController {
     //    await this.cacheManager.set("products_backend", products, 1000);
     // }
     return {
-      total, 
-      prev,
-      page,
-      next, 
+      total,
+      prevPage,
+      nextPage,
       last_page,
-      data
-
+      data,
     };
   }
 }

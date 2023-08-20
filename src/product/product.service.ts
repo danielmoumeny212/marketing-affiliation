@@ -12,4 +12,13 @@ export class ProductService extends AbstractService<Product> {
   ) {
     super(productRepository);
   }
+
+  sort(products: Product[], criteria: "asc" | "desc"): Product[] {
+    return products.sort((a, b) => {
+      const diff = a.price - b.price;
+      if (diff === 0) return 0;
+      const sign = Math.abs(diff) / diff;
+      return criteria === 'asc' ? sign : -sign;
+    });
+  }
 }
