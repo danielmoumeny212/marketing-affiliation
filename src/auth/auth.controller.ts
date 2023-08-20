@@ -37,7 +37,8 @@ export class AuthController {
     }
     const is_ambassador =
       req.url === '/api/ambassador/register' ? true : false;
-    return this.authService.newUser(rest, is_ambassador);
+    console.log("hello")
+    return this.userService.newUser(rest, is_ambassador);
   }
 
   @Post(['admin/login', 'ambassador/login'])

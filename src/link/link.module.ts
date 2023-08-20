@@ -7,6 +7,7 @@ import { Links } from './link';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Links])
+    
   ],
   providers: [LinkService],
   controllers: [LinkController]

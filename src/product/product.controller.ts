@@ -26,7 +26,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Request } from 'express';
 import { ProcessorService } from 'src/auth/processor.service';
 
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @Controller()
 export class ProductController {
   constructor(

@@ -1,6 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, forwardRef, Inject } from '@nestjs/common';
+import { Request } from 'express';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -8,15 +9,13 @@ export class AuthService {
   private readonly salt = 12;
 
   constructor(
-    private userService: UserService,
+    @Inject(forwardRef(() => UserService)) private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
-  private async hashPwd(pwd: string): Promise<string> {
+  async hashPwd(pwd: string): Promise<string> {
     return await bcrypt.hash(pwd, this.salt);
   }
-
- 
 
   async checkCookie(cookie: any) {
     return await this.jwtService.verifyAsync(cookie);
@@ -32,5 +31,10 @@ export class AuthService {
 
   async generateJwt(payload): Promise<string> {
     return await this.jwtService.signAsync(payload);
+  }
+  async getAuthenticatedUser(request: Request) {
+    const { id } = await this.checkCookie(request.cookies['jwt']);
+
+    return this.userService.findOne({ where: { id } });
   }
 }
