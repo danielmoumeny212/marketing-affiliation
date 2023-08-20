@@ -108,9 +108,11 @@ export class ProductController {
     const perPage =  9; 
 
     const data = products.slice((page -1) * perPage, page * perPage)
+    const url  = `${process.env.BASE_URL}${request.path}`
     const total = products.length
     const last_page =  Math.ceil(total / perPage);
-    const prev = page === 1 ? null : `${process.env.BASE_URL}${request.path}`    
+    const prev = page === 1 ? null : page >= last_page ? null : `${url}?page=${page - 1}`
+    const next = page === 1 ? null : page >= last_page ? null : `${url}?page=${page + 1}`; 
 
 
     // let  products = await this.cacheManager.get("products_backend");
@@ -119,10 +121,10 @@ export class ProductController {
     //    await this.cacheManager.set("products_backend", products, 1000);
     // }
     return {
-    
       total, 
-      page,
       prev,
+      page,
+      next, 
       last_page,
       data
 
