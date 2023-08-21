@@ -1,3 +1,5 @@
+import { ClassSerializerInterceptor } from '@nestjs/common';
+import { UseInterceptors } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import {
   Controller,
@@ -14,9 +16,9 @@ import { LinkService } from './link.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Order } from 'src/order/order';
 
-  
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 @Controller()
+@UseInterceptors(ClassSerializerInterceptor)
 export class LinkController {
   constructor(
     private linkService: LinkService,
@@ -62,6 +64,12 @@ export class LinkController {
       };
     });
   }
-  
-  
+
+  @Get('checkout/links/:code')
+  async links(@Param('code') code: string) {
+    return this.linkService.findOne({
+      where: { code },
+      relations: ['user', 'products'],
+    });
+  }
 }

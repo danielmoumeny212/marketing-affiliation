@@ -3,7 +3,7 @@ import { Order } from 'src/order/order';
 import {
   Column,
   Entity,
-  OneToMany,
+   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
