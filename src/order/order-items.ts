@@ -7,7 +7,7 @@ export class OrderItem {
  @Column() product_name: string; 
  @Column() price: number; 
  @Column() quantity: number; 
- @Column() admin_revenue: number; 
+ @Column({default: 0}) admin_revenue: number; 
  @Column() ambassador_revenue: number; 
  
  @ManyToOne(() => Order , order => order.order_items)

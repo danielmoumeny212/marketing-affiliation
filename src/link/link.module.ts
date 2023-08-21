@@ -10,6 +10,7 @@ import { Links } from './link';
     
   ],
   providers: [LinkService],
-  controllers: [LinkController]
+  controllers: [LinkController], 
+  exports: [LinkService]
 })
 export class LinkModule {}
